@@ -14,4 +14,15 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Backend\Orders\Handlers\" />
+    <Folder Include="Backend\Places\Handlers\" />
+    <Folder Include="Contracts\Orders\Commands\" />
+    <Folder Include="Contracts\Orders\Views\" />
+    <Folder Include="Contracts\Orders\Queries\" />
+    <Folder Include="Contracts\Places\Commands\" />
+    <Folder Include="Contracts\Places\Views\" />
+    <Folder Include="Contracts\Places\Queries\" />
+  </ItemGroup>
+
 </Project>
