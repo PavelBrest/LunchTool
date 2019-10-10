@@ -17,6 +17,8 @@
   <ItemGroup>
     <Folder Include="Backend\Orders\Handlers\" />
     <Folder Include="Backend\Places\Handlers\" />
+    <Folder Include="Contracts\Menu\Views\" />
+    <Folder Include="Contracts\Menu\Queries\" />
     <Folder Include="Contracts\Orders\Commands\" />
     <Folder Include="Contracts\Orders\Views\" />
     <Folder Include="Contracts\Orders\Queries\" />
