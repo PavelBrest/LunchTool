@@ -14,8 +14,10 @@ using System.Threading.Tasks;
 namespace LT.Core.Backend.Menu.Handlers
 {
     [HandlerDecorator(typeof(ValidateRequestDecorator<CreateMenu, Unit>))]
-    internal class MenuCommandsHandler
-        : ICommandHandler<CreateMenu>
+    [HandlerDecorator(typeof(ValidateRequestDecorator<DeleteMenu, Unit>))]
+    internal class MenuCommandsHandler :
+        ICommandHandler<CreateMenu>,
+        ICommandHandler<DeleteMenu>
     {
         private readonly IRepository<Menu> _repository;
         private readonly IMapper _mapper;
@@ -31,6 +33,13 @@ namespace LT.Core.Backend.Menu.Handlers
             var entity = _mapper.Map<Menu>(request);
 
             await _repository.AddAsync(entity);
+
+            return Unit.Value;
+        }
+
+        public async Task<Unit> Handle(DeleteMenu request, CancellationToken cancellationToken)
+        {
+            await _repository.DeleteAsync(request.Id);
 
             return Unit.Value;
         }
