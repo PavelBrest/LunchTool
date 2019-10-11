@@ -31,8 +31,7 @@ namespace LT.Core.Contracts.User.Commands
                                         .EmailAddress();
 
             RuleFor(p => p.Password).NotEmpty()
-                                    .MinimumLength(6)
-                                    .MaximumLength(25);
+                                    .Matches(@"^(?=.*[a-z])(?=.*[A-Z]{1,})(?=.*\d)[\S]{6,25}$");
         }
     }
 }
