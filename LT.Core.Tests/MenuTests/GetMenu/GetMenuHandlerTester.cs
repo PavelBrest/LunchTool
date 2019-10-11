@@ -25,7 +25,7 @@ namespace LT.Core.Tests.MenuTests.GetMenu
             _mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MenuMappings()));
         }
 
-        [Fact]
+        //[Fact]
         public void Should_not_have_error_GetMenu_query()
         {
             var guid = Guid.NewGuid();
