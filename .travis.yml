@@ -9,3 +9,7 @@ env:
 
 script:
     - dotnet build LT.sln -c Release
+    - dotnet test -c Release --no-build LT.Core.Tests/LT.Core.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+    
+after_script:
+    - bash <(curl -s https://codecov.io/bash)
