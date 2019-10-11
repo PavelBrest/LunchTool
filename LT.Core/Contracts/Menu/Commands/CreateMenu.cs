@@ -59,7 +59,7 @@ namespace LT.Core.Contracts.Menu.Commands
                     context.MessageFormatter.AppendArgument("TypeId", item.TypeId);
                     return false;
                 }
-                else if (string.IsNullOrEmpty(item.Description))
+                else if (string.IsNullOrWhiteSpace(item.Description))
                 {
                     context.MessageFormatter.AppendArgument("Description", item.Description);
                     return false;
