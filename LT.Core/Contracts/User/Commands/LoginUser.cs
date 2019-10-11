@@ -18,7 +18,7 @@ namespace LT.Core.Contracts.User.Commands
 
             RuleFor(p => p.Password).NotEmpty()
                                     .MinimumLength(6)
-                                    .MaximumLength(16);
+                                    .MaximumLength(25);
         }
     }
 }
