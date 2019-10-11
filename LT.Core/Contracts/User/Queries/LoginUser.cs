@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
-using LT.Core.Seedwork.CQRS.Commands;
+using LT.Core.Contracts.User.Views;
+using LT.Core.Seedwork.CQRS.Query;
 
-namespace LT.Core.Contracts.User.Commands
+namespace LT.Core.Contracts.User.Queries
 {
-    public class LoginUser : ICommand
+    public class LoginUser : IQuery<LoginUserView>
     {
         public string Login { get; set; }
         public string Password { get; set; }
