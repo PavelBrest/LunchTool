@@ -1,82 +1,115 @@
 ﻿using AutoMapper;
-using LT.Core.Backend.Dishes;
-using LT.Core.Backend.DishTypes;
+using FluentValidation;
+using LT.Core.Backend.Decorators;
 using LT.Core.Backend.Menu;
 using LT.Core.Backend.Menu.Handlers;
 using LT.Core.Backend.Menu.Mappings;
-using LT.Core.Backend.Places;
+using LT.Core.Contracts.Menu.Queries;
 using LT.Core.Seedwork.Data;
+using MediatR;
+using MockQueryable.Moq;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace LT.Core.Tests.MenuTests.GetMenu
+namespace LT.Core.Tests.MenuTests.GetMenuTests
 {
+    using GetMenuView = Contracts.Menu.Views.GetMenuView;
+
     public class GetMenuHandlerTester
     {
-        private readonly Mock<IReadonlyRepository<Menu>> _mockRep;
-        private readonly MapperConfiguration _mockMapper;
+        private readonly IMapper _mapper;
+        private readonly Mock<IReadonlyRepository<Menu>> _mockRepository;
 
         public GetMenuHandlerTester()
         {
-            _mockRep = new Mock<IReadonlyRepository<Menu>>();
-            _mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MenuMappings()));
+            var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new MenuMappings()));
+
+            _mapper = mockMapper.CreateMapper();
+            _mockRepository = new Mock<IReadonlyRepository<Menu>>();
         }
 
-        //[Fact]
-        public void Should_not_have_error_GetMenu_query()
+        [Fact]
+        public async void Should_not_have_error_ValidateDecorGetMenu()
         {
-            var guid = Guid.NewGuid();
-            _mockRep.Setup(p => p.GetAll()).Returns(GetAllMenu(guid));
+            var command = new GetMenu { Id = Guid.NewGuid() };
+            var list = new List<Menu> { new Menu { Id = command.Id } };
+            var mock = list.AsQueryable().BuildMock();
 
-            var handler = new MenuQueryHandler(_mockRep.Object, _mockMapper.CreateMapper());
-            var query = new Contracts.Menu.Queries.GetMenu { Id = guid };
+            _mockRepository.Setup(p => p.GetAll())
+                           .Returns(mock.Object);
 
-            var result = handler.Handle(query, default).GetAwaiter().GetResult();
+            var validateDecor = new ValidateRequestDecorator<GetMenu, GetMenuView>(new GetMenuValidator());
+            var handler = new MenuQueryHandler(_mockRepository.Object, _mapper);
+            var @delegate = new RequestHandlerDelegate<GetMenuView>(() => handler.Handle(command, default));
 
-
-            var dto = GetAllMenu(guid).First();
-            var list = dto.Dishes.ToList();
-
-            Assert.Equal(guid, result.Id);
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                var item = dto.Dishes.ElementAt(i);
-
-                Assert.Equal(item.Id, list[i].Id);
-                Assert.Equal(item.DishTypeId, list[i].DishTypeId);
-                Assert.Equal(item.DishType.Title, list[i].DishType.Title);
-                Assert.Equal(item.MenuId, list[i].MenuId);
-                Assert.Equal(item.Menu, list[i].Menu);
-                Assert.Equal(item.Description, list[i].Description);
-                Assert.Equal(item.Price, list[i].Price);
-            }
+            await validateDecor.Handle(command, default, @delegate);
         }
 
-        private IQueryable<Menu> GetAllMenu(Guid menuGuid)
+        [Fact]
+        public async void Should_have_error_ValidateDecorGetMenu_Id_default()
         {
-            var menu = new Menu
-            {
-                Id = menuGuid,
-                PlaceId = Guid.NewGuid(),
-                Place = new Place()
-            };
+            var command = new GetMenu { Id = default };
+            var list = new List<Menu> { new Menu { Id = command.Id } };
+            var mock = list.AsQueryable().BuildMock();
 
-            var list = new List<Dish>
-            {
-                new Dish { Id = Guid.NewGuid(), DishTypeId = Guid.NewGuid(), DishType = new DishType { Title = "DTest1" }, Description = "Test1", Price = 0.5M, MenuId = menuGuid, Menu = menu },
-                new Dish { Id = Guid.NewGuid(), DishTypeId = Guid.NewGuid(), DishType = new DishType { Title = "DTest1" }, Description = "Test2", Price = 0.4M, MenuId = menuGuid, Menu = menu },
-                new Dish { Id = Guid.NewGuid(), DishTypeId = Guid.NewGuid(), DishType = new DishType { Title = "DTest3" }, Description = "Test3", Price = 0.9M, MenuId = menuGuid, Menu = menu },
-                new Dish { Id = Guid.NewGuid(), DishTypeId = Guid.NewGuid(), DishType = new DishType { Title = "DTest3" }, Description = "Test4", Price = 0.8M, MenuId = menuGuid, Menu = menu },
-                new Dish { Id = Guid.NewGuid(), DishTypeId = Guid.NewGuid(), DishType = new DishType { Title = "DTest3" }, Description = "Test5", Price = 0.7M, MenuId = menuGuid, Menu = menu },
-                new Dish { Id = Guid.NewGuid(), DishTypeId = Guid.NewGuid(), DishType = new DishType { Title = "DTest2" }, Description = "Test6", Price = 0.6M, MenuId = menuGuid, Menu = menu }
-            };
-            menu.Dishes = list.AsReadOnly();
+            _mockRepository.Setup(p => p.GetAll())
+                           .Returns(mock.Object);
 
-            return new List<Menu> { menu }.AsQueryable();
+            var validateDecor = new ValidateRequestDecorator<GetMenu, GetMenuView>(new GetMenuValidator());
+            var handler = new MenuQueryHandler(_mockRepository.Object, _mapper);
+            var @delegate = new RequestHandlerDelegate<GetMenuView>(() => handler.Handle(command, default));
+
+            await Assert.ThrowsAsync<ValidationException>(() => validateDecor.Handle(command, default, @delegate));
+        }
+
+        [Fact]
+        public async void Should_not_have_error_GetMenuHandler()
+        {
+            var command = new GetMenu { Id = Guid.NewGuid() };
+            var list = new List<Menu> { new Menu { Id = command.Id } };
+            var mock = list.AsQueryable().BuildMock();
+
+            _mockRepository.Setup(p => p.GetAll())
+                           .Returns(mock.Object);
+
+            var handler = new MenuQueryHandler(_mockRepository.Object, _mapper);
+
+            await handler.Handle(command, default);
+        }
+
+        [Fact]
+        public async void Should_have_error_ValidateDecorGetMenu_ORM_Exception()
+        {
+            var command = new GetMenu { Id = Guid.NewGuid() };
+            var list = new List<Menu> { new Menu { Id = command.Id } };
+            var mock = list.AsQueryable().BuildMock();
+
+            _mockRepository.Setup(p => p.GetAll())
+                           .Throws<Exception>();
+
+            var validateDecor = new ValidateRequestDecorator<GetMenu, GetMenuView>(new GetMenuValidator());
+            var handler = new MenuQueryHandler(_mockRepository.Object, _mapper);
+            var @delegate = new RequestHandlerDelegate<GetMenuView>(() => handler.Handle(command, default));
+
+            await Assert.ThrowsAsync<Exception>(() => validateDecor.Handle(command, default, @delegate));
+        }
+
+        [Fact]
+        public async void Should_have_error_GetMenuHandler_ORM_Exception()
+        {
+            var command = new GetMenu { Id = Guid.NewGuid() };
+            var list = new List<Menu> { new Menu { Id = command.Id } };
+            var mock = list.AsQueryable().BuildMock();
+
+            _mockRepository.Setup(p => p.GetAll())
+                           .Throws<Exception>();
+
+            var handler = new MenuQueryHandler(_mockRepository.Object, _mapper);
+
+            await Assert.ThrowsAsync<Exception>(() => handler.Handle(command, default));
         }
     }
 }

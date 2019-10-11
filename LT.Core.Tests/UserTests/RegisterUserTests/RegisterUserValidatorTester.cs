@@ -138,19 +138,19 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
         [Fact]
         public void Should_not_have_error_Password_Length6()
         {
-            _validator.ShouldNotHaveValidationErrorFor(p => p.Password, "123456");
+            _validator.ShouldNotHaveValidationErrorFor(p => p.Password, "asdDS2");
         }
 
         [Fact]
         public void Should_not_have_error_Password_Length16()
         {
-            _validator.ShouldNotHaveValidationErrorFor(p => p.Password, "1234567891234567");
+            _validator.ShouldNotHaveValidationErrorFor(p => p.Password, "123456D91aDF4567");
         }
 
         [Fact]
         public void Should_not_have_error_Password_Length25()
         {
-            _validator.ShouldNotHaveValidationErrorFor(p => p.Password, "1234567891234567891234567");
+            _validator.ShouldNotHaveValidationErrorFor(p => p.Password, "1234a67SGR234567891234567");
         }
 
         [Fact]
@@ -175,13 +175,31 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
         [Fact]
         public void Should_have_error_Password_LengthLessThen6()
         {
-            _validator.ShouldHaveValidationErrorFor(p => p.Password, "12345");
+            _validator.ShouldHaveValidationErrorFor(p => p.Password, "1ASd5");
         }
 
         [Fact]
         public void Should_have_error_Password_LengthMoreThen25()
         {
-            _validator.ShouldHaveValidationErrorFor(p => p.Password, "12345678912345678912345674");
+            _validator.ShouldHaveValidationErrorFor(p => p.Password, "123456789123JG67aaa2345674");
+        }
+
+        [Fact]
+        public void Should_have_error_Password_Invalid_AllLowerCase()
+        {
+            _validator.ShouldHaveValidationErrorFor(p => p.Password, "123456789123sd67aaa2");
+        }
+
+        [Fact]
+        public void Should_have_error_Password_Invalid_AllDigits()
+        {
+            _validator.ShouldHaveValidationErrorFor(p => p.Password, "123456789123346723");
+        }
+
+        [Fact]
+        public void Should_have_error_Password_Invalid_AllUpper()
+        {
+            _validator.ShouldHaveValidationErrorFor(p => p.Password, "12345678JFYR34HG23");
         }
     }
 }
