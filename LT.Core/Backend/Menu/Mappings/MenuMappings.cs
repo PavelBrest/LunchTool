@@ -15,7 +15,10 @@ namespace LT.Core.Backend.Menu.Mappings
                 .ForMember(p => p.Dishes, cfg => cfg.MapFrom(p => p.Dishes.Select(SelectDish)));
 
             CreateMap<Menu, GetMenuView>()
-                .ForMember(p => p.Dishes, cfg => cfg.MapFrom(p => p.Dishes.Select(SelectDishInfo)));
+                .ForMember(p => p.Dishes, 
+                           cfg => cfg.MapFrom(p => p.Dishes == null ?
+                                  Enumerable.Empty<GetMenuView.DishInfo>() :
+                                  p.Dishes.Select(SelectDishInfo)));
 
         }
 
