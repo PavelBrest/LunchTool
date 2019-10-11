@@ -24,6 +24,8 @@
     <Folder Include="Contracts\Places\Commands\" />
     <Folder Include="Contracts\Places\Views\" />
     <Folder Include="Contracts\Places\Queries\" />
+    <Folder Include="Contracts\User\Views\" />
+    <Folder Include="Contracts\User\Queries\" />
   </ItemGroup>
 
 </Project>
