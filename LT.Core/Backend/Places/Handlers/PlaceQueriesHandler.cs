@@ -6,6 +6,7 @@ using LT.Core.CQRS;
 using LT.Core.Seedwork.CQRS.Query;
 using LT.Core.Seedwork.Data;
 using Microsoft.EntityFrameworkCore;
+using AutoMapper.QueryableExtensions;
 using System;
 using System.Linq;
 using System.Threading;
@@ -29,20 +30,19 @@ namespace LT.Core.Backend.Places.Handlers
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
         }
 
-        public Task<PlaceView> Handle(GetPlace request, CancellationToken cancellationToken)
+        public async Task<PlaceView> Handle(GetPlace request, CancellationToken cancellationToken)
         {
-            var query = _repository.GetAll()
-                                   .Where(p => p.Id == request.Id);
-
-            return _mapper.ProjectTo<PlaceView>(query)
-                          .SingleAsync();
+            return await _repository.GetAll()
+                                    .Where(p => p.Id == request.Id)
+                                    .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
+                                    .SingleOrDefaultAsync();
         }
 
-        public Task<IReadOnlyList<PlaceView>> Handle(GetPlaces request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<PlaceView>> Handle(GetPlaces request, CancellationToken cancellationToken)
         {
-            var query = _repository.GetAll();
-
-            return Task.FromResult((IReadOnlyList<PlaceView>)new List<PlaceView>(_mapper.ProjectTo<PlaceView>(query).AsEnumerable()).AsReadOnly());
+            return await Task.FromResult((IReadOnlyList<PlaceView>)new List<PlaceView>(_repository.GetAll()
+                                                                                                  .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
+                                                                                                  .AsEnumerable()).AsReadOnly());
         }
     }
 }
