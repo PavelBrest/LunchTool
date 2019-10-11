@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using MediatR;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -27,5 +27,4 @@ namespace LT.Core.Backend.Decorators
             return next();
         }
     }
-
 }
