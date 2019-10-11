@@ -1,5 +1,5 @@
 ﻿using FluentValidation.TestHelper;
-using LT.Core.Contracts.User.Commands;
+using LT.Core.Contracts.User.Queries;
 using Xunit;
 
 namespace LT.Core.Tests.UserTests.LoginUserTests
