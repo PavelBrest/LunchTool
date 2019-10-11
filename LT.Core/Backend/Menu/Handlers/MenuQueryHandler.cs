@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using LT.Core.Backend.Decorators;
 using LT.Core.Contracts.Menu.Queries;
 using LT.Core.Contracts.Menu.Views;
@@ -28,11 +29,10 @@ namespace LT.Core.Backend.Menu.Handlers
 
         public Task<GetMenuView> Handle(GetMenu request, CancellationToken cancellationToken)
         {
-            var query = _repository.GetAll()
-                                   .Where(p => p.Id == request.Id);
-
-            return _mapper.ProjectTo<GetMenuView>(query)
-                          .SingleAsync();
+            return _repository.GetAll()
+                              .Where(p => p.Id == request.Id)
+                              .ProjectTo<GetMenuView>(_mapper.ConfigurationProvider)
+                              .SingleAsync();
         }
     }
 }
