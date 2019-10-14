@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using LT.Core.Seedwork.CQRS.Commands;
+using FluentValidation;
 
 namespace LT.Core.Contracts.Places.Commands
 {
@@ -13,5 +12,13 @@ namespace LT.Core.Contracts.Places.Commands
         }
 
         public Guid Id { get; }
+    }
+
+    public class DeletePlaceValidator : AbstractValidator<DeletePlace>
+    {
+        public DeletePlaceValidator()
+        {
+            RuleFor(x => x.Id).NotEmpty();
+        }
     }
 }

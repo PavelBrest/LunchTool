@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using LT.Core.Seedwork.CQRS.Commands;
+using FluentValidation;
 
 namespace LT.Core.Contracts.Places.Commands
 {
@@ -27,5 +26,17 @@ namespace LT.Core.Contracts.Places.Commands
         public DateTime OrderDeadline { get; }
         public DateTime StartServeTime { get; }
         public DateTime EndServeTime { get; }
+    }
+
+    public class UpdatePlaceValidator : AbstractValidator<UpdatePlace>
+    {
+        UpdatePlaceValidator()
+        {
+            RuleFor(x => x.Id).NotEmpty();
+            RuleFor(x => x.Name).NotEmpty();
+            RuleFor(x => x.Address).NotEmpty();
+            RuleFor(x => x.OrderDeadline).NotEmpty();
+            RuleFor(x => x.PhoneNumber).Matches(@"^([+]{1}375(33|29|25)[0-9]{7})$").When(x => x?.PhoneNumber != null);
+        }
     }
 }

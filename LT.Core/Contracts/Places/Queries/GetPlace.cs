@@ -1,6 +1,7 @@
 ﻿using System;
 using LT.Core.Contracts.Places.Views;
 using LT.Core.Seedwork.CQRS.Query;
+using FluentValidation;
 
 namespace LT.Core.Contracts.Places.Queries
 {
@@ -12,5 +13,13 @@ namespace LT.Core.Contracts.Places.Queries
         }
 
         public Guid Id { get; }
+    }
+
+    public class GetPlaceValidator : AbstractValidator<GetPlace>
+    {
+        public GetPlaceValidator()
+        {
+            RuleFor(x => x.Id).NotEmpty();
+        }
     }
 }
