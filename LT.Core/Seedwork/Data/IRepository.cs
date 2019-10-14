@@ -23,5 +23,7 @@ namespace LT.Core.Seedwork.Data
         TEntity Update(TEntity entity, bool shouldSaveChanges = true);
         Task<TEntity> UpdateAsync(TEntity entity, bool shouldSaveChanges = true);
         Task<TEntity> UpdateAsync(TEntity entity);
+        TEntity GetById(object Id);
+        Task<TEntity> GetByIdAsync(object Id);
     }
 }
