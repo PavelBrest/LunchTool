@@ -30,19 +30,26 @@ namespace LT.Core.Backend.Places.Handlers
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
         }
 
-        public async Task<PlaceView> Handle(GetPlace request, CancellationToken cancellationToken)
+        public Task<PlaceView> Handle(GetPlace request, CancellationToken cancellationToken)
         {
-            return await _repository.GetAll()
-                                    .Where(p => p.Id == request.Id)
-                                    .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
-                                    .SingleOrDefaultAsync();
+            return _repository.GetAll()
+                              .Where(p => p.Id == request.Id)
+                              .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
+                              .SingleOrDefaultAsync() ?? throw new Exception();
         }
 
-        public async Task<IReadOnlyList<PlaceView>> Handle(GetPlaces request, CancellationToken cancellationToken)
+        public Task<IReadOnlyList<PlaceView>> Handle(GetPlaces request, CancellationToken cancellationToken)
         {
-            return await Task.FromResult((IReadOnlyList<PlaceView>)new List<PlaceView>(_repository.GetAll()
-                                                                                                  .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
-                                                                                                  .AsEnumerable()).AsReadOnly());
+            return _repository.GetAll()
+                                    .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
+                                    .AsReadOnlyAsync() ?? throw new Exception();
         }
+    }
+
+    public static class IQueryabbleExtension
+    {
+        public static Task<IReadOnlyList<PlaceView>> AsReadOnlyAsync(this IQueryable<PlaceView> queryable) =>
+            queryable.ToListAsync()
+                     .ContinueWith(p => (IReadOnlyList<PlaceView>)p.Result);
     }
 }
