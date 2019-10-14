@@ -13,6 +13,7 @@ namespace LT.Core.Backend.Users.Mappings
             CreateMap<ChangeUserEmail, User>();
             CreateMap<ChangeUserName, User>();
             CreateMap<ChangeUserSurname, User>();
+            CreateMap<User, GetUserInfoView>();
 
             CreateMap<ChangeUserPassword, User>()
                 .ForMember(p => p.Password, cfg => cfg.MapFrom(p => p.NewPassword));
