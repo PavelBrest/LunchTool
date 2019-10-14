@@ -5,12 +5,11 @@ using LT.Core.Backend.Users;
 using LT.Core.Backend.Users.Handlers;
 using LT.Core.Backend.Users.Mappings;
 using LT.Core.Contracts.User.Commands;
+using LT.Core.Seedwork.CQRS.Commands;
 using LT.Core.Seedwork.Data;
 using MediatR;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace LT.Core.Tests.UserTests.RegisterUserTests
@@ -20,12 +19,20 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
         private readonly IMapper _mapper;
         private readonly Mock<IRepository<User>> _mockRepository;
 
+        private readonly IPipelineBehavior<RegisterUser, Unit> _validateDecorator;
+        private readonly ICommandHandler<RegisterUser> _handler;
+
         public RegisterUserHadlerTester()
         {
             var mockMapper = new MapperConfiguration(cfg => cfg.AddProfile(new UserMappings()));
 
             _mapper = mockMapper.CreateMapper();
             _mockRepository = new Mock<IRepository<User>>();
+            _mockRepository.Setup(p => p.AddAsync(It.IsAny<User>()));
+
+
+            _validateDecorator = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
+            _handler = new UserCommandsHandler(_mockRepository.Object, _mapper);
         }
 
         [Fact]
@@ -40,13 +47,9 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
                 EmailAddress = "1@gmail.com"
             };
 
-            _mockRepository.Setup(p => p.AddAsync(It.IsAny<User>()));
+            var @delegate = new RequestHandlerDelegate<Unit>(() => _handler.Handle(command, default));
 
-            var validateDecor = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
-            var handler = new UserCommandsHandler(_mockRepository.Object, _mapper);
-            var @delegate = new RequestHandlerDelegate<Unit>(() => handler.Handle(command, default));
-
-            await validateDecor.Handle(command, default, @delegate);
+            await _validateDecorator.Handle(command, default, @delegate);
         }
 
         [Fact]
@@ -61,13 +64,9 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
                 EmailAddress = "1@gmail.com"
             };
 
-            _mockRepository.Setup(p => p.AddAsync(It.IsAny<User>()));
+            var @delegate = new RequestHandlerDelegate<Unit>(() => _handler.Handle(command, default));
 
-            var validateDecor = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
-            var handler = new UserCommandsHandler(_mockRepository.Object, _mapper);
-            var @delegate = new RequestHandlerDelegate<Unit>(() => handler.Handle(command, default));
-
-            await Assert.ThrowsAsync<ValidationException>(() => validateDecor.Handle(command, default, @delegate));
+            await Assert.ThrowsAsync<ValidationException>(() => _validateDecorator.Handle(command, default, @delegate));
         }
 
         [Theory]
@@ -87,13 +86,9 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
                 EmailAddress = "1@gmail.com"
             };
 
-            _mockRepository.Setup(p => p.AddAsync(It.IsAny<User>()));
+            var @delegate = new RequestHandlerDelegate<Unit>(() => _handler.Handle(command, default));
 
-            var validateDecor = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
-            var handler = new UserCommandsHandler(_mockRepository.Object, _mapper);
-            var @delegate = new RequestHandlerDelegate<Unit>(() => handler.Handle(command, default));
-
-            await Assert.ThrowsAsync<ValidationException>(() => validateDecor.Handle(command, default, @delegate));
+            await Assert.ThrowsAsync<ValidationException>(() => _validateDecorator.Handle(command, default, @delegate));
         }
 
         [Theory]
@@ -111,13 +106,9 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
                 EmailAddress = "1@gmail.com"
             };
 
-            _mockRepository.Setup(p => p.AddAsync(It.IsAny<User>()));
+            var @delegate = new RequestHandlerDelegate<Unit>(() => _handler.Handle(command, default));
 
-            var validateDecor = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
-            var handler = new UserCommandsHandler(_mockRepository.Object, _mapper);
-            var @delegate = new RequestHandlerDelegate<Unit>(() => handler.Handle(command, default));
-
-            await Assert.ThrowsAsync<ValidationException>(() => validateDecor.Handle(command, default, @delegate));
+            await Assert.ThrowsAsync<ValidationException>(() => _validateDecorator.Handle(command, default, @delegate));
         }
 
         [Theory]
@@ -137,13 +128,9 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
                 EmailAddress = email
             };
 
-            _mockRepository.Setup(p => p.AddAsync(It.IsAny<User>()));
+            var @delegate = new RequestHandlerDelegate<Unit>(() => _handler.Handle(command, default));
 
-            var validateDecor = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
-            var handler = new UserCommandsHandler(_mockRepository.Object, _mapper);
-            var @delegate = new RequestHandlerDelegate<Unit>(() => handler.Handle(command, default));
-
-            await Assert.ThrowsAsync<ValidationException>(() => validateDecor.Handle(command, default, @delegate));
+            await Assert.ThrowsAsync<ValidationException>(() => _validateDecorator.Handle(command, default, @delegate));
         }
 
         [Theory]
@@ -165,13 +152,9 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
                 EmailAddress = "1@gmail.com"
             };
 
-            _mockRepository.Setup(p => p.AddAsync(It.IsAny<User>()));
+            var @delegate = new RequestHandlerDelegate<Unit>(() => _handler.Handle(command, default));
 
-            var validateDecor = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
-            var handler = new UserCommandsHandler(_mockRepository.Object, _mapper);
-            var @delegate = new RequestHandlerDelegate<Unit>(() => handler.Handle(command, default));
-
-            await Assert.ThrowsAsync<ValidationException>(() => validateDecor.Handle(command, default, @delegate));
+            await Assert.ThrowsAsync<ValidationException>(() => _validateDecorator.Handle(command, default, @delegate));
         }
 
         [Fact]
@@ -209,11 +192,11 @@ namespace LT.Core.Tests.UserTests.RegisterUserTests
             _mockRepository.Setup(p => p.AddAsync(It.IsAny<User>()))
                            .Throws<Exception>();
 
-            var validateDecor = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
+            var validateDecorator = new ValidateRequestDecorator<RegisterUser, Unit>(new RegisterUserValidator());
             var handler = new UserCommandsHandler(_mockRepository.Object, _mapper);
             var @delegate = new RequestHandlerDelegate<Unit>(() => handler.Handle(command, default));
 
-            await Assert.ThrowsAsync<Exception>(() => validateDecor.Handle(command, default, @delegate));
+            await Assert.ThrowsAsync<Exception>(() => validateDecorator.Handle(command, default, @delegate));
         }
     }
 }
