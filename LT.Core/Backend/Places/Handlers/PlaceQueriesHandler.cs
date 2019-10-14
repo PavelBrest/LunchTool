@@ -17,6 +17,7 @@ using System.Collections.Generic;
 namespace LT.Core.Backend.Places.Handlers
 {
     [HandlerDecorator(typeof(ValidateRequestDecorator<GetPlace, PlaceView>))]
+    [HandlerDecorator(typeof(ValidateRequestDecorator<GetPlaces, IReadOnlyList<PlaceView>>))]
     internal class PlaceQueriesHandler :
         IQueryHandler<GetPlace, PlaceView>,
         IQueryHandler<GetPlaces,IReadOnlyList<PlaceView>>
