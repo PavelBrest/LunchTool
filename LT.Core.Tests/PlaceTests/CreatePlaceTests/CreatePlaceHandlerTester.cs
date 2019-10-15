@@ -136,7 +136,7 @@ namespace LT.Core.Tests.PlaceTests.CreatePlaceTests
                 address: "Test address",
                 phoneNumber: "+375331111111",
                 comment: "Test comment",
-                orderDeadline: new DateTime(),
+                orderDeadline: default,
                 startServeTime: new DateTime(222222),
                 endServeTime: new DateTime(333333));
 
@@ -188,7 +188,6 @@ namespace LT.Core.Tests.PlaceTests.CreatePlaceTests
         }
 
         [Theory]
-        [InlineData(default)]
         [InlineData("")]
         [InlineData(" ")]
         [InlineData("123456789012")]
