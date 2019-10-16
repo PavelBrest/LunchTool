@@ -18,12 +18,8 @@ namespace LT.Core.Backend.Orders
 
         public ICollection<Dishes.Dish> Dishes { get; set; }
 
-        public Guid LimitId { get; set; }
-        public Limits.Limit Limit { get; set; }
-
         public DateTime Date { get; set; }
         public decimal OrderCost { get; set; }
-        public decimal DiscountValue { get; set; }
         public decimal ResultCost { get; set; }
     }
 }
