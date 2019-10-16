@@ -5,6 +5,7 @@ using LT.Core.Contracts.Places.Views;
 using LT.Core.CQRS;
 using LT.Core.Seedwork.CQRS.Query;
 using LT.Core.Seedwork.Data;
+using LT.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper.QueryableExtensions;
 using System;
@@ -46,12 +47,5 @@ namespace LT.Core.Backend.Places.Handlers
                               .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
                               .AsReadOnlyAsync();
         }
-    }
-
-    public static class IQueryabbleExtension
-    {
-        public static Task<IReadOnlyList<PlaceView>> AsReadOnlyAsync(this IQueryable<PlaceView> queryable) =>
-            queryable.ToListAsync()
-                     .ContinueWith(p => (IReadOnlyList<PlaceView>)p.Result);
     }
 }
