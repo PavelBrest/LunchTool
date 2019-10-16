@@ -5,11 +5,11 @@ using Xunit;
 
 namespace LT.Core.Tests.PlaceTests.GetPlaceTests
 {
-    public class GetPlaceValidationHandler
+    public class GetPlaceValidationTester
     {
         private readonly GetPlaceValidator _validator;
 
-        public GetPlaceValidationHandler()
+        public GetPlaceValidationTester()
         {
             _validator = new GetPlaceValidator();
         }
