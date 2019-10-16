@@ -7,12 +7,15 @@ namespace LT.Core.Contracts.Places.Queries
 {
     public class GetPlace : IQuery<PlaceView>
     {
+        public GetPlace()
+        { }
+
         public GetPlace(Guid id)
         {
             Id = id;
         }
 
-        public Guid Id { get; }
+        public Guid Id { get; set; }
     }
 
     public class GetPlaceValidator : AbstractValidator<GetPlace>

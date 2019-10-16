@@ -31,19 +31,21 @@ namespace LT.Core.Backend.Places.Handlers
             _mapper = mapper ?? throw new ArgumentException(nameof(mapper));
         }
 
-        public Task<PlaceView> Handle(GetPlace request, CancellationToken cancellationToken)
+        public async Task<PlaceView> Handle(GetPlace request, CancellationToken cancellationToken)
         {
-            return _repository.GetAll()
-                              .Where(p => p.Id == request.Id)
-                              .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
-                              .SingleOrDefaultAsync() ?? throw new Exception();
+            var result = await _repository.GetAll()
+                                          .Where(p => p.Id == request.Id)
+                                          .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
+                                          .SingleOrDefaultAsync();
+            return result ?? throw new Exception();
         }
 
-        public Task<IReadOnlyList<PlaceView>> Handle(GetPlaces request, CancellationToken cancellationToken)
+        public async Task<IReadOnlyList<PlaceView>> Handle(GetPlaces request, CancellationToken cancellationToken)
         {
-            return _repository.GetAll()
-                                    .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
-                                    .AsReadOnlyAsync() ?? throw new Exception();
+            var result = await _repository.GetAll()
+                                          .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
+                                          .AsReadOnlyAsync();
+            return result ?? throw new Exception();
         }
     }
 
