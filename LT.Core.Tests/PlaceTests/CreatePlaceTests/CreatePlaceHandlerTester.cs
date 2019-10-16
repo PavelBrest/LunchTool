@@ -211,5 +211,46 @@ namespace LT.Core.Tests.PlaceTests.CreatePlaceTests
 
             await Assert.ThrowsAsync<ValidationException>(() => _validateDecorator.Handle(request, default, @delegate));
         }
+
+        [Fact]
+        public async void Should_have_error_CreatePlaceHandler_ORM_Exception()
+        {
+            var request = new CreatePlace(
+                id: Guid.NewGuid(),
+                name: "Test Name",
+                address: "Test address",
+                phoneNumber: "+375331111111",
+                comment: "Test comment",
+                orderDeadline: new DateTime(111111),
+                startServeTime: new DateTime(222222),
+                endServeTime: new DateTime(333333));
+
+            _mockRepository.Setup(p => p.AddAsync(It.IsAny<Place>())).Throws<Exception>();
+
+            var handler = new PlaceCommandsHandler(_mockRepository.Object, _mapper);
+
+            await Assert.ThrowsAsync<Exception>(() => handler.Handle(request, default));
+        }
+
+        [Fact]
+        public async void Should_have_error_ValidateDecoratorCreatePlace_ORM_Exception()
+        {
+            var request = new CreatePlace(
+                id: Guid.NewGuid(),
+                name: "Test Name",
+                address: "Test address",
+                phoneNumber: "+375331111111",
+                comment: "Test comment",
+                orderDeadline: new DateTime(111111),
+                startServeTime: new DateTime(222222),
+                endServeTime: new DateTime(333333));
+
+            _mockRepository.Setup(p => p.AddAsync(It.IsAny<Place>())).Throws<Exception>();
+
+            var handler = new PlaceCommandsHandler(_mockRepository.Object, _mapper);
+            var @delegate = new RequestHandlerDelegate<Unit>(() => _handler.Handle(request, default));
+
+            await Assert.ThrowsAsync<Exception>(() => _validateDecorator.Handle(request, default, @delegate));
+        }
     }
 }

@@ -6,6 +6,9 @@ namespace LT.Core.Contracts.Places.Commands
 {
     public class CreatePlace : ICommand
     {
+        public CreatePlace()
+        { }
+
         public CreatePlace(Guid id, string name, string address, string phoneNumber, string comment, DateTime orderDeadline, DateTime startServeTime, DateTime endServeTime)
         {
             Id = id;
@@ -18,14 +21,14 @@ namespace LT.Core.Contracts.Places.Commands
             EndServeTime = endServeTime;
         }
 
-        public Guid Id { get; }
-        public string Name { get; }
-        public string Address { get; }
-        public string PhoneNumber { get; }
-        public string Comment { get; }
-        public DateTime OrderDeadline { get; }
-        public DateTime StartServeTime { get; }
-        public DateTime EndServeTime { get; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Comment { get; set; }
+        public DateTime OrderDeadline { get; set; }
+        public DateTime StartServeTime { get; set; }
+        public DateTime EndServeTime { get; set; }
     }
 
     public class CreatePlaceValidator : AbstractValidator<CreatePlace>
