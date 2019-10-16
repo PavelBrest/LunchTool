@@ -6,12 +6,15 @@ namespace LT.Core.Contracts.Places.Commands
 {
     public class DeletePlace : ICommand
     {
+        public DeletePlace()
+        { }
+
         public DeletePlace(Guid id)
         {
             Id = id;
         }
 
-        public Guid Id { get; }
+        public Guid Id { get; set; }
     }
 
     public class DeletePlaceValidator : AbstractValidator<DeletePlace>

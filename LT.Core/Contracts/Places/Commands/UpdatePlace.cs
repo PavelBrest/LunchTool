@@ -6,6 +6,9 @@ namespace LT.Core.Contracts.Places.Commands
 {
     public class UpdatePlace : ICommand
     {
+        public UpdatePlace()
+        { }
+
         public UpdatePlace(Guid id, string name, string address, string phoneNumber, string comment, DateTime orderDeadline, DateTime startServeTime, DateTime endServeTime)
         {
             Id = id;
@@ -18,14 +21,14 @@ namespace LT.Core.Contracts.Places.Commands
             EndServeTime = endServeTime;
         }
 
-        public Guid Id { get; }
-        public string Name { get; }
-        public string Address { get; }
-        public string PhoneNumber { get; }
-        public string Comment { get; }
-        public DateTime OrderDeadline { get; }
-        public DateTime StartServeTime { get; }
-        public DateTime EndServeTime { get; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Comment { get; set; }
+        public DateTime OrderDeadline { get; set; }
+        public DateTime StartServeTime { get; set; }
+        public DateTime EndServeTime { get; set; }
     }
 
     public class UpdatePlaceValidator : AbstractValidator<UpdatePlace>
@@ -36,7 +39,7 @@ namespace LT.Core.Contracts.Places.Commands
             RuleFor(x => x.Name).NotEmpty();
             RuleFor(x => x.Address).NotEmpty();
             RuleFor(x => x.OrderDeadline).NotEmpty();
-            RuleFor(x => x.PhoneNumber).Matches(@"^([+]{1}375(33|29|25)[0-9]{7})$").When(x => x?.PhoneNumber != null);
+            RuleFor(x => x.PhoneNumber).Matches(@"^([+]{1}375(33|29|25|17|44)[0-9]{7})$").When(x => x?.PhoneNumber != null);
         }
     }
 }
