@@ -33,7 +33,7 @@ namespace LT.Core.Contracts.Places.Commands
 
     public class UpdatePlaceValidator : AbstractValidator<UpdatePlace>
     {
-        UpdatePlaceValidator()
+        public UpdatePlaceValidator()
         {
             RuleFor(x => x.Id).NotEmpty();
             RuleFor(x => x.Name).NotEmpty();
