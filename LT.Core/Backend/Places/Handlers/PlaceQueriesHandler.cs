@@ -40,12 +40,11 @@ namespace LT.Core.Backend.Places.Handlers
             return result ?? throw new Exception();
         }
 
-        public async Task<IReadOnlyList<PlaceView>> Handle(GetPlaces request, CancellationToken cancellationToken)
+        public Task<IReadOnlyList<PlaceView>> Handle(GetPlaces request, CancellationToken cancellationToken)
         {
-            var result = await _repository.GetAll()
-                                          .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
-                                          .AsReadOnlyAsync();
-            return result ?? throw new Exception();
+            return _repository.GetAll()
+                              .ProjectTo<PlaceView>(_mapper.ConfigurationProvider)
+                              .AsReadOnlyAsync();
         }
     }
 
