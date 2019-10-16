@@ -1,7 +1,6 @@
 ﻿using FluentValidation.TestHelper;
 using LT.Core.Contracts.Places.Commands;
 using System;
-using System.Collections.Generic;
 using Xunit;
 
 namespace LT.Core.Tests.PlaceTests.CreatePlaceTests
